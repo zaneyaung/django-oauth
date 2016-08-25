@@ -4,6 +4,7 @@ import random
 import hashlib
 from urllib import quote
 from .models import OauthApps
+import json
 
 
 def createNoncestr(length=32):
@@ -20,9 +21,11 @@ def formatBizQueryParaMap(paraMap, urlencode):
     slist = sorted(paraMap)
     buff = []
     for k in slist:
-        v = quote(paraMap[k]) if urlencode else paraMap[k]
+        v = paraMap[k]
+        if not isinstance(paraMap[k], (int, str)):
+            v = json.dumps(paraMap[k])
+        v = quote(v) if urlencode else v
         buff.append("{0}={1}".format(k, v))
-
     return "&".join(buff)
 
 
@@ -37,7 +40,6 @@ def getSign(obj, secret):
 
     # 签名步骤四：所有字符转为大写
     result_ = String.upper()
-    print result_
     return result_
 
 
