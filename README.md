@@ -6,7 +6,7 @@ Djdg Django Oauth provides a simple signature middleware verification between ap
 
 Support
 -------
-mail to zane.yaung@live.com
+mail to zane.yang@hey900.com
 
 Requirements
 ------------
@@ -17,11 +17,11 @@ Requirements
 Installation
 ------------
 
-Install with pip
+**Install with pip**
 
-    pip install djdg-oauth
+    pip install djdg-django-oauth
 
-Add `djdg_oauth` to your `INSTALLED_APPS`
+**Add `djdg_oauth` to your `INSTALLED_APPS`**
 
 
     INSTALLED_APPS = (
@@ -29,35 +29,35 @@ Add `djdg_oauth` to your `INSTALLED_APPS`
         'djdg_oauth',
     )
 
-run migrate to add tables:
+**run migrate to add tables:**
 
 
-    python manage.py migrate djdg_oauth
+	python manage.py migrate djdg_oauth
 
 
-list, add, del app secret:
+**list, add, del app secret:**
 
     python manage.py listoauthapp {app_name}
     python manage.py addoauthapp {app_name}
     python manage.py deloauthapp {app_name}
 
-add middleware:
+**add middleware**(**options**,  *you can create yourself middleware with   djdg_oauth.oauthclient.OauthClient.verify_request*):
 
     MIDDLEWARE_CLASSES = (
     ...
     'djdg_oauth.middleware.DjdgAuthMiddleware',
 )
 
-add settings:
+**add settings**(*app secret gaved by others*)
 
     DJDG_AUTH = {
         "APPS": [
             {"appid": "xxxxxx", "secret": "xxxxxxxxxxxxxxxxxxx", "app": "xxx"},
               ....
         ]
-
         "FULL_ESCAPE_URL": [....] # full match url to escape auth check,
-        "REGEX_ESCAPE_URL": [....] # regex match url to escape auth check
+        "REGEX_ESCAPE_URL": [....] # regex match url to escape auth check,
+		"REGEX_CHECK_URL":[...] # need check url, if not empty, escape urls invalid
     }
 )
 
