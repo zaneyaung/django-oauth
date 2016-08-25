@@ -58,6 +58,7 @@ add settings:
 
         "FULL_ESCAPE_URL": [....] # full match url to escape auth check,
         "REGEX_ESCAPE_URL": [....] # regex match url to escape auth check
+        "REGEX_CHECK_URL":[...] # regex url to check, if this setting exists, escape_url settings invalid
     }
 )
 

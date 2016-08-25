@@ -75,3 +75,6 @@ djdg-oauth is released under the terms of the **BSD license**. Full details in `
 
 Changelog
 ---------
+0.0.2 version
+
+add settings to assign  url to check permission
