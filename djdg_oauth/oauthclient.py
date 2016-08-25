@@ -79,7 +79,7 @@ class OAuthClient(object):
         return verifySign(body, keys_obj.secret, signature)
 
     @staticmethod
-    def oauth_request(url, method, app, parameters=None, headers=None):
+    def oauth_request(url, method, app, parameters={}, headers=None):
         try:
             signature, parameters = set_parameters(parameters, app)
         except Exception as e:

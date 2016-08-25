@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 
-version = '0.0.2'
+version = '0.0.4'
 
 
 LONG_DESCRIPTION = open('README.rst').read()
@@ -28,7 +28,7 @@ setup(
     license='BSD',
     packages=find_packages(),
     install_requires=[
-        'django>=1.8',
+        'django==1.9',
         'six',
     ],
     zip_safe=False,

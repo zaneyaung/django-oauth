@@ -78,3 +78,9 @@ Changelog
 0.0.2 version
 
 add settings to assign  url to check permission
+
+-----
+
+0.0.3 version
+
+json dumps dict or list post parameter to string for md5
