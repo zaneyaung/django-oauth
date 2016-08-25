@@ -18,16 +18,25 @@ class DjdgAuthMiddleware(object):
                 'FULL_ESCAPE_URL', [])
             regex_escape_url = django_settings.DJDG_AUTH.get(
                 'REGEX_ESCAPE_URL', [])
+            regex_check_url = django_settings.DJDG_AUTH.get(
+                'REGEX_CHECK_URL', [])
+
             path = request.path.strip('/')
-            if path in full_escape_url:
-                return
-            for url in regex_escape_url:
-                if re.match(url, path):
+            if regex_check_url:
+                for url in regex_check_url:
+                    if re.match(url, path):
+                        break
+                else:
                     return
-        else:
-            try:
-                auth = OAuthClient()
-                if not auth.verify_request(request):
-                    return Http401Response('Unauthorized')
-            except Exception as e:
-                return Http401Response(e.message)
+            else:
+                if path in full_escape_url:
+                    return
+                for url in regex_escape_url:
+                    if re.match(url, path):
+                        return
+        try:
+            auth = OAuthClient()
+            if not auth.verify_request(request):
+                return Http401Response('Unauthorized')
+        except Exception as e:
+            return Http401Response(e.message)
