@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 
 import json
 import requests
+from django.conf import settings as django_settings
+import re
 try:
     from urlparse import urlparse, urlunparse
 except ImportError:
@@ -67,13 +69,33 @@ class OAuthClient(object):
         """
         :param request: The current django.http.HttpRequest object
         """
+        if hasattr(django_settings, "DJDG_AUTH"):
+            full_escape_url = django_settings.DJDG_AUTH.get(
+                'FULL_ESCAPE_URL', [])
+            regex_escape_url = django_settings.DJDG_AUTH.get(
+                'REGEX_ESCAPE_URL', [])
+            regex_check_url = django_settings.DJDG_AUTH.get(
+                'REGEX_CHECK_URL', [])
+            path = request.path.strip('/')
+            if regex_check_url:
+                for url in regex_check_url:
+                    if re.match(url, path):
+                        break
+                else:
+                    return
+            else:
+                if path in full_escape_url:
+                    return
+                for url in regex_escape_url:
+                    if re.match(url, path):
+                        return
         uri, http_method, body, headers = self._extract_params(request)
         if not body.get("appid"):
             raise Exception(u"can not find appid in request body")
         keys_obj = get_verify_key(body.get("appid"))
         if not keys_obj:
             raise Exception(
-                "can not fetch any settings, please check appid correct")
+                "can not fetch any settings, please make sure appid incorrect")
         signature = headers.get("Authorization")
         request.app_type = keys_obj.app
         return verifySign(body, keys_obj.secret, signature)
