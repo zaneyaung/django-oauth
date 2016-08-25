@@ -37,9 +37,9 @@ run migrate to add tables:
 
 list, add, del app secret:
 
-    python manage.py python manage.py listoauthapp {app_name}
-    python manage.py python manage.py addoauthapp {app_name}
-    python manage.py python manage.py deloauthapp {app_name}
+    python manage.py listoauthapp {app_name}
+    python manage.py addoauthapp {app_name}
+    python manage.py deloauthapp {app_name}
 
 add middleware:
 
@@ -58,12 +58,28 @@ add settings:
 
         "FULL_ESCAPE_URL": [....] # full match url to escape auth check,
         "REGEX_ESCAPE_URL": [....] # regex match url to escape auth check
-        "REGEX_CHECK_URL":[...] # regex url to check, if this setting exists, escape_url settings invalid
     }
 )
 
 Documentation
 --------------
+
+**Verify request**
+
+	from djdg_oauth.oauthclient import OauthClient
+	auth = OauthClient()
+	auth.verify(request)
+
+**Do request**
+	
+	from djdg_oauth.oauthclient import OauthClient
+	request_data = {
+		"url": #url,
+		"app": #app type,
+		"parameters": #all request data,
+		"method": #request method,
+		"headers": #default None
+	}
 
 
 License

@@ -12,6 +12,12 @@ except ImportError:
 from .oauthcore import get_verify_key, verifySign, set_parameters
 import logging
 log = logging.getLogger("oauthlib")
+from django.http.response import HttpResponse
+
+
+class Http401Response(HttpResponse):
+
+    status_code = 401
 
 
 class OAuthClient(object):
@@ -97,7 +103,7 @@ class OAuthClient(object):
             raise Exception(
                 "can not fetch any settings, please make sure appid incorrect")
         signature = headers.get("Authorization")
-        request.app_type = keys_obj.app
+        request.client_type = keys_obj.app
         return verifySign(body, keys_obj.secret, signature)
 
     @staticmethod

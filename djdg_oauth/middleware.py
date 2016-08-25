@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-from .oauthclient import OAuthClient
-from django.http.response import HttpResponse
-
-
-class Http401Response(HttpResponse):
-
-    status_code = 401
+from .oauthclient import OAuthClient, Http401Response
 
 
 class DjdgAuthMiddleware(object):
