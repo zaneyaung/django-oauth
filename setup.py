@@ -28,7 +28,7 @@ setup(
     license='BSD',
     packages=find_packages(),
     install_requires=[
-        'django==1.9',
+        'django>=1.9',
         'six',
     ],
     zip_safe=False,

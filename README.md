@@ -80,6 +80,7 @@ Documentation
 		"method": #request method,
 		"headers": #default None
 	}
+	OauthClient.oauth_request(**request_data)
 
 
 License
