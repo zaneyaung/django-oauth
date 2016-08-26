@@ -2,7 +2,6 @@
 from django.conf import settings as django_settings
 import random
 import hashlib
-from urllib import quote
 from .models import OauthApps
 import json
 
@@ -22,9 +21,12 @@ def formatBizQueryParaMap(paraMap, urlencode):
     buff = []
     for k in slist:
         v = paraMap[k]
-        if not isinstance(paraMap[k], (int, str)):
+        if not isinstance(paraMap[k], (int, str, unicode)):
             v = json.dumps(paraMap[k])
-        v = quote(v) if urlencode else v
+        try:
+            v = v.encode('utf-8')
+        except:
+            pass
         buff.append("{0}={1}".format(k, v))
     return "&".join(buff)
 

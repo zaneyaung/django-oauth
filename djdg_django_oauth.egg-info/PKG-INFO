@@ -1,19 +1,20 @@
 Metadata-Version: 1.1
 Name: djdg-django-oauth
-Version: 0.0.8
+Version: 0.0.9
 Summary: djdg OAuth2 method for Django
 Home-page: UNKNOWN
 Author: zaneYang
 Author-email: zane.yang@hey900.com
 License: BSD
-Description: djdg django OAuth
-        ====================
+Description: # django-oauth
         
+        Description
+        --------
         Djdg Django Oauth provides a simple signature middleware verification between apps
         
         Support
         -------
-        mail to zane.yaung@live.com
+        mail to zane.yang@hey900.com
         
         Requirements
         ------------
@@ -24,56 +25,70 @@ Description: djdg django OAuth
         Installation
         ------------
         
-        Install with pip::
+        **Install with pip**
         
-            pip install djdg-oauth
+            pip install djdg-django-oauth
         
-        Add `djdg_oauth` to your `INSTALLED_APPS`
+        **Add `djdg_oauth` to your `INSTALLED_APPS`**
         
-        .. code-block:: python
         
             INSTALLED_APPS = (
                 ...
                 'djdg_oauth',
             )
         
-        run migrate to add tables
-        .. code-block:: python
-        
-            python manage.py migrate djdg_oauth
+        **run migrate to add tables:**
         
         
-        list, add, del app secret::
-        .. code-block:: python
+        	python manage.py migrate djdg_oauth
         
-            python manage.py python manage.py listoauthapp {app_name}
-            python manage.py python manage.py addoauthapp {app_name}
-            python manage.py python manage.py deloauthapp {app_name}
         
-        add middleware::
-        .. code-block:: python
+        **list, add, del app secret:**
+        
+            python manage.py listoauthapp {app_name}
+            python manage.py addoauthapp {app_name}
+            python manage.py deloauthapp {app_name}
+        
+        **add middleware**(**options**,  *you can create yourself middleware with   djdg_oauth.oauthclient.OauthClient.verify_request*):
         
             MIDDLEWARE_CLASSES = (
             ...
             'djdg_oauth.middleware.DjdgAuthMiddleware',
         )
         
-        add settings::
-        .. code-block:: python
+        **add settings**(*app secret gaved by others*)
         
             DJDG_AUTH = {
                 "APPS": [
                     {"appid": "xxxxxx", "secret": "xxxxxxxxxxxxxxxxxxx", "app": "xxx"},
                       ....
                 ]
-        
                 "FULL_ESCAPE_URL": [....] # full match url to escape auth check,
-                "REGEX_ESCAPE_URL": [....] # regex match url to escape auth check
+                "REGEX_ESCAPE_URL": [....] # regex match url to escape auth check,
+        		"REGEX_CHECK_URL":[...] # need check url, if not empty, escape urls invalid
             }
         )
         
         Documentation
         --------------
+        
+        **Verify request**
+        
+        	from djdg_oauth.oauthclient import OauthClient
+        	auth = OauthClient()
+        	auth.verify(request)
+        
+        **Do request**
+        	
+        	from djdg_oauth.oauthclient import OauthClient
+        	request_data = {
+        		"url": #url,
+        		"app": #app type,
+        		"parameters": #all request data,
+        		"method": #request method,
+        		"headers": #default None
+        	}
+        	OauthClient.oauth_request(**request_data)
         
         
         License
@@ -83,15 +98,6 @@ Description: djdg django OAuth
         
         Changelog
         ---------
-        0.0.2 version
-        
-        add settings to assign  url to check permission
-        
-        -----
-        
-        0.0.3 version
-        
-        json dumps dict or list post parameter to string for md5
         
 Keywords: djdg django oauth2 oauthlib
 Platform: UNKNOWN

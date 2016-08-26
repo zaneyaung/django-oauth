@@ -11,8 +11,11 @@ except ImportError:
     from urllib.parse import urlparse, urlunparse
 from .oauthcore import get_verify_key, verifySign, set_parameters
 import logging
-log = logging.getLogger("oauthlib")
 from django.http.response import HttpResponse
+log_settings = "oauthlib"
+if hasattr(django_settings, 'DJDG_AUTH'):
+    log_settings = django_settings.DJDG_AUTH.get('log', log_settings)
+log = logging.getLogger(log_settings)
 
 
 class Http401Response(HttpResponse):
@@ -64,7 +67,7 @@ class OAuthClient(object):
         :param request: The current django.http.HttpRequest object
         :return: provided POST parameters
         """
-        if request.environ.get("Content-Type") == "application/json":
+        if request.environ.get("CONTENT_TYPE") == "application/json;charset=utf-8":
             return json.loads(request.body.decode('utf-8')).items()
         elif request.method == "GET":
             return request.GET.items()

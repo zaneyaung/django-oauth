@@ -37,9 +37,9 @@ Installation
 
 **list, add, del app secret:**
 
-    python manage.py listoauthapp {app_name}
-    python manage.py addoauthapp {app_name}
-    python manage.py deloauthapp {app_name}
+    python manage.py listauthapp {app_name}
+    python manage.py addauthapp {app_name}
+    python manage.py delauthapp {app_name}
 
 **add middleware**(**options**,  *you can create yourself middleware with   djdg_oauth.oauthclient.OauthClient.verify_request*):
 
@@ -57,9 +57,11 @@ Installation
         ]
         "FULL_ESCAPE_URL": [....] # full match url to escape auth check,
         "REGEX_ESCAPE_URL": [....] # regex match url to escape auth check,
-		"REGEX_CHECK_URL":[...] # need check url, if not empty, escape urls invalid
+		"REGEX_CHECK_URL":[...] # need check url, if not empty, escape urls invalid,
+        "log": # auth log settings
     }
 )
+
 
 Documentation
 --------------
@@ -71,7 +73,7 @@ Documentation
 	auth.verify(request)
 
 **Do request**
-	
+
 	from djdg_oauth.oauthclient import OauthClient
 	request_data = {
 		"url": #url,
