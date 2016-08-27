@@ -4,6 +4,16 @@ import random
 import hashlib
 from .models import OauthApps
 import simplejson
+import urlparse
+import sys
+PY3 = sys.version_info[0] == 3
+
+if PY3:
+    unicode_type = str
+    bytes_type = bytes
+else:
+    unicode_type = unicode
+    bytes_type = str
 
 
 def createNoncestr(length=32):
@@ -17,16 +27,16 @@ def createNoncestr(length=32):
 
 def formatBizQueryParaMap(paraMap, urlencode):
     """格式化参数，签名过程需要使用"""
+    paraMap = to_unicode(paraMap)
     slist = sorted(paraMap)
     buff = []
     for k in slist:
         v = paraMap[k]
+        if v is None or v == "":
+            # 为空直接跳过
+            continue
         if not isinstance(paraMap[k], (int, str, unicode)):
             v = simplejson.dumps(paraMap[k])
-        try:
-            v = v.encode('utf-8')
-        except:
-            pass
         buff.append("{0}={1}".format(k, str(v)))
     return "&".join(buff)
 
@@ -71,3 +81,43 @@ def set_parameters(parameters, app):
     parameters["appid"] = appkeys["appid"]
     parameters["nonce_str"] = createNoncestr(12)
     return getSign(parameters, appkeys["secret"]), parameters
+
+
+def add_querystr_to_params(url, params):
+    """pick url querystring to params"""
+    sch, net, path, par, query, fra = urlparse.urlparse(url)
+    query_params = urlparse.parse_qsl(query, keep_blank_values=True)
+    params.update(query_params)
+    uri = urlparse.urlunparse((sch, net, path, par, '', fra))
+    return uri, params
+
+
+def to_unicode(data, encoding='UTF-8'):
+    """Convert a number of different types of objects to unicode."""
+    if isinstance(data, unicode_type):
+        return data
+
+    if isinstance(data, bytes_type):
+        return unicode_type(data, encoding=encoding)
+
+    if hasattr(data, '__class__'):
+        try:
+            str(data)
+        except:
+            pass
+
+    if hasattr(data, '__iter__'):
+        try:
+            dict(data)
+        except TypeError:
+            pass
+        except ValueError:
+            # Assume it's a one dimensional data structure
+            return (to_unicode(i, encoding) for i in data)
+        else:
+            # We support 2.6 which lacks dict comprehensions
+            if hasattr(data, 'items'):
+                data = data.items()
+            return dict(((to_unicode(k, encoding), to_unicode(v, encoding)) for k, v in data))
+
+    return data

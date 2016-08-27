@@ -9,7 +9,8 @@ try:
     from urlparse import urlparse, urlunparse
 except ImportError:
     from urllib.parse import urlparse, urlunparse
-from .oauthcore import get_verify_key, verifySign, set_parameters
+from .oauthcore import get_verify_key, verifySign, set_parameters, \
+    add_querystr_to_params
 import logging
 from django.http.response import HttpResponse
 log_settings = "oauthlib"
@@ -111,6 +112,7 @@ class OAuthClient(object):
 
     @staticmethod
     def oauth_request(url, method, app, parameters={}, headers=None):
+        url, parameters = add_querystr_to_params(url, parameters)
         try:
             signature, parameters = set_parameters(parameters, app)
         except Exception as e:
