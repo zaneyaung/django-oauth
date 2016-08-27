@@ -3,7 +3,7 @@ from django.conf import settings as django_settings
 import random
 import hashlib
 from .models import OauthApps
-import json
+import simplejson
 
 
 def createNoncestr(length=32):
@@ -22,7 +22,7 @@ def formatBizQueryParaMap(paraMap, urlencode):
     for k in slist:
         v = paraMap[k]
         if not isinstance(paraMap[k], (int, str, unicode)):
-            v = json.dumps(paraMap[k])
+            v = simplejson.dumps(paraMap[k])
         try:
             v = v.encode('utf-8')
         except:
@@ -34,7 +34,7 @@ def formatBizQueryParaMap(paraMap, urlencode):
 def getSign(obj, secret):
     """生成签名"""
     # 签名步骤一：按字典序排序参数,formatBizQueryParaMap已做
-    String = formatBizQueryParaMap(obj, False)
+    String = formatBizQueryParaMap(obj, True)
     # 签名步骤二：在string后加入KEY
     String = "{0}&secret={1}".format(String, secret)
     # 签名步骤三：MD5加密
@@ -62,9 +62,6 @@ def get_sign_key(app):
 def get_verify_key(appid):
     auth_list = OauthApps.objects.filter(appid=appid)
     return auth_list[0] if auth_list else None
-
-
-get_verify_key(80145171)
 
 
 def set_parameters(parameters, app):

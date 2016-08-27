@@ -70,7 +70,7 @@ Documentation
 
 	from djdg_oauth.oauthclient import OauthClient
 	auth = OauthClient()
-	auth.verify(request)
+	auth.verify_request(request)
 
 **Do request**
 

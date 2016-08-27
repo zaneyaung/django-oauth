@@ -118,7 +118,6 @@ class OAuthClient(object):
             return {"statusCode": 500, "msg": e.message}
         headers_dict = {
             "Accept": "application/json",
-            "Content-Type": "application/json;charset=utf-8",
             "Authorization": signature
         }
         headers = headers.update(headers_dict) if headers else headers_dict
@@ -127,6 +126,7 @@ class OAuthClient(object):
             r = requests.request(
                 method=method, url=url, headers=headers, params=parameters)
         else:
+            headers["Content-Type"] = "application/json;charset=utf-8"
             r = requests.request(
                 method=method, url=url, json=parameters, headers=headers)
         if r.status_code != 200:

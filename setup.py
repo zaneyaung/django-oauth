@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 
-version = '0.0.11'
+version = '0.0.12'
 
 
 LONG_DESCRIPTION = open('README.rst').read()
@@ -30,6 +30,7 @@ setup(
     install_requires=[
         'django>=1.9',
         'six',
+        'simplejson',
     ],
     zip_safe=False,
 )
