@@ -92,3 +92,6 @@ djdg-oauth is released under the terms of the **BSD license**. Full details in `
 
 Changelog
 ---------
+
+v 0.0.12
+新增对于Decimal与datetime之类的class数组value进行处理时，str化
