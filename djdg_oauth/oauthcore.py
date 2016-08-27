@@ -27,7 +27,7 @@ def formatBizQueryParaMap(paraMap, urlencode):
             v = v.encode('utf-8')
         except:
             pass
-        buff.append("{0}={1}".format(k, v))
+        buff.append("{0}={1}".format(k, str(v)))
     return "&".join(buff)
 
 

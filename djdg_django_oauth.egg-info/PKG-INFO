@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: djdg-django-oauth
-Version: 0.0.9
+Version: 0.0.10
 Summary: djdg OAuth2 method for Django
 Home-page: UNKNOWN
 Author: zaneYang
@@ -45,9 +45,9 @@ Description: # django-oauth
         
         **list, add, del app secret:**
         
-            python manage.py listoauthapp {app_name}
-            python manage.py addoauthapp {app_name}
-            python manage.py deloauthapp {app_name}
+            python manage.py listauthapp {app_name}
+            python manage.py addauthapp {app_name}
+            python manage.py delauthapp {app_name}
         
         **add middleware**(**options**,  *you can create yourself middleware with   djdg_oauth.oauthclient.OauthClient.verify_request*):
         
@@ -79,7 +79,7 @@ Description: # django-oauth
         	auth.verify(request)
         
         **Do request**
-        	
+        
         	from djdg_oauth.oauthclient import OauthClient
         	request_data = {
         		"url": #url,
