@@ -3,7 +3,6 @@ from django.conf import settings as django_settings
 import random
 import hashlib
 from .models import OauthApps
-import simplejson
 import urlparse
 import sys
 PY3 = sys.version_info[0] == 3
@@ -27,6 +26,8 @@ def createNoncestr(length=32):
 
 def formatBizQueryParaMap(paraMap, urlencode):
     """格式化参数，签名过程需要使用"""
+    if isinstance(paraMap, (str, unicode)):
+        return paraMap
     paraMap = to_unicode(paraMap)
     slist = sorted(paraMap)
     buff = []
@@ -35,8 +36,6 @@ def formatBizQueryParaMap(paraMap, urlencode):
         if v is None or v == "":
             # 为空直接跳过
             continue
-        if not isinstance(paraMap[k], (int, str, unicode)):
-            v = simplejson.dumps(paraMap[k])
         buff.append("{0}={1}".format(k, str(v)))
     return "&".join(buff)
 
@@ -49,7 +48,6 @@ def getSign(obj, secret):
     String = "{0}&secret={1}".format(String, secret)
     # 签名步骤三：MD5加密
     String = hashlib.md5(String).hexdigest()
-
     # 签名步骤四：所有字符转为大写
     result_ = String.upper()
     return result_
@@ -80,7 +78,7 @@ def set_parameters(parameters, app):
         raise Exception("app secret not find, please check you settings file")
     parameters["appid"] = appkeys["appid"]
     parameters["nonce_str"] = createNoncestr(12)
-    return getSign(parameters, appkeys["secret"]), parameters
+    return appkeys["secret"], parameters
 
 
 def add_querystr_to_params(url, params):
@@ -94,18 +92,9 @@ def add_querystr_to_params(url, params):
 
 def to_unicode(data, encoding='UTF-8'):
     """Convert a number of different types of objects to unicode."""
-    if isinstance(data, unicode_type):
-        return data
-
-    if isinstance(data, bytes_type):
-        return unicode_type(data, encoding=encoding)
-
-    if hasattr(data, '__class__'):
-        try:
-            str(data)
-        except:
-            pass
-
+    import datetime
+    import decimal
+    type_to_str = (datetime.datetime, decimal.Decimal)
     if hasattr(data, '__iter__'):
         try:
             dict(data)
@@ -113,11 +102,14 @@ def to_unicode(data, encoding='UTF-8'):
             pass
         except ValueError:
             # Assume it's a one dimensional data structure
-            return (to_unicode(i, encoding) for i in data)
+            data = [to_unicode(i, encoding) for i in data]
         else:
             # We support 2.6 which lacks dict comprehensions
             if hasattr(data, 'items'):
                 data = data.items()
-            return dict(((to_unicode(k, encoding), to_unicode(v, encoding)) for k, v in data))
-
+            data = dict([(to_unicode(k, encoding), to_unicode(v, encoding)) for k, v in data])
+    if isinstance(data, type_to_str):
+        data = str(data)
+    if isinstance(data, bytes_type):
+        data = unicode(data, encoding='utf-8')
     return data

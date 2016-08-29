@@ -9,14 +9,14 @@ try:
     from urlparse import urlparse, urlunparse
 except ImportError:
     from urllib.parse import urlparse, urlunparse
-from .oauthcore import get_verify_key, verifySign, set_parameters, \
-    add_querystr_to_params
+from .oauthcore import get_verify_key, verifySign, set_parameters, getSign
 import logging
 from django.http.response import HttpResponse
 log_settings = "oauthlib"
 if hasattr(django_settings, 'DJDG_AUTH'):
     log_settings = django_settings.DJDG_AUTH.get('log', log_settings)
 log = logging.getLogger(log_settings)
+from .oauthcore import to_unicode
 
 
 class Http401Response(HttpResponse):
@@ -48,7 +48,7 @@ class OAuthClient(object):
         uri = self._get_escaped_full_path(request)
         http_method = request.method
         headers = self.extract_headers(request)
-        body = dict(self.extract_body(request))
+        body = self.extract_body(request)
         return uri, http_method, body, headers
 
     def extract_headers(self, request):
@@ -68,12 +68,13 @@ class OAuthClient(object):
         :param request: The current django.http.HttpRequest object
         :return: provided POST parameters
         """
-        if request.environ.get("CONTENT_TYPE") == "application/json;charset=utf-8":
-            return json.loads(request.body.decode('utf-8')).items()
+        if request.environ.get(
+                "CONTENT_TYPE") == "application/json;charset=utf-8":
+            return request.body
         elif request.method == "GET":
-            return request.GET.items()
+            return request.GET.dict()
         else:
-            return request.POST.items()
+            return request.POST.dict()
 
     def verify_request(self, request):
         """
@@ -100,9 +101,12 @@ class OAuthClient(object):
                     if re.match(url, path):
                         return
         uri, http_method, body, headers = self._extract_params(request)
-        if not body.get("appid"):
+        dict_body = body
+        if http_method != 'GET':
+            dict_body = json.loads(body)
+        if not dict_body.get("appid"):
             raise Exception(u"can not find appid in request body")
-        keys_obj = get_verify_key(body.get("appid"))
+        keys_obj = get_verify_key(dict_body.get("appid"))
         if not keys_obj:
             raise Exception(
                 "can not fetch any settings, please make sure appid incorrect")
@@ -111,10 +115,15 @@ class OAuthClient(object):
         return verifySign(body, keys_obj.secret, signature)
 
     @staticmethod
-    def oauth_request(url, method, app, parameters={}, headers=None):
-        url, parameters = add_querystr_to_params(url, parameters)
+    def oauth_request(url, method, app, parameters={}, headers={}):
+        secret, parameters = set_parameters(parameters, app)
+
+        if method == "get":
+            params = parameters
+        else:
+            params = json.dumps(to_unicode(parameters))
         try:
-            signature, parameters = set_parameters(parameters, app)
+            signature = getSign(params, secret)
         except Exception as e:
             log.info(e.message)
             return {"statusCode": 500, "msg": e.message}
@@ -122,15 +131,18 @@ class OAuthClient(object):
             "Accept": "application/json",
             "Authorization": signature
         }
-        headers = headers.update(headers_dict) if headers else headers_dict
-        log.info(parameters)
         if method == "get":
-            r = requests.request(
-                method=method, url=url, headers=headers, params=parameters)
+            re = requests.Request(
+                method=method, url=url,
+                params=params, headers=headers_dict)
         else:
-            headers["Content-Type"] = "application/json;charset=utf-8"
-            r = requests.request(
-                method=method, url=url, json=parameters, headers=headers)
+            headers_dict["Content-Type"] = "application/json;charset=utf-8"
+            re = requests.Request(
+                method=method, url=url,
+                data=params, headers=headers_dict)
+        pre_re = re.prepare()
+        res_session = requests.Session()
+        r = res_session.send(pre_re)
         if r.status_code != 200:
             log.error(r.content)
             return {"statusCode": 500, "msg": r.content}
