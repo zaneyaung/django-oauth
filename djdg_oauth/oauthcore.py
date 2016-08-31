@@ -96,12 +96,8 @@ def to_unicode(data, encoding='UTF-8'):
     import decimal
     type_to_str = (datetime.datetime, decimal.Decimal)
     if hasattr(data, '__iter__'):
-        try:
-            dict(data)
-        except TypeError:
-            pass
-        except ValueError:
-            # Assume it's a one dimensional data structure
+        if isinstance(data, list):
+            # Assume it's a one list data structure
             data = [to_unicode(i, encoding) for i in data]
         else:
             # We support 2.6 which lacks dict comprehensions

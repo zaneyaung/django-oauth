@@ -95,3 +95,8 @@ Changelog
 
 v 0.0.12
 新增对于Decimal与datetime之类的class数组value进行处理时，str化
+
+
+v 0.0.16
+修复to_unicode时，list 数据会被字典化
+
