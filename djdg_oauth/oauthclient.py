@@ -68,8 +68,8 @@ class OAuthClient(object):
         :param request: The current django.http.HttpRequest object
         :return: provided POST parameters
         """
-        if request.environ.get(
-                "CONTENT_TYPE") == "application/json;charset=utf-8":
+        CONTENT_TYPE = request.environ.get("CONTENT_TYPE")
+        if CONTENT_TYPE and CONTENT_TYPE.upper() in ("APPLICATION/JSON;CHARSET=UTF-8", "APPLICATION/JSON"):
             return request.body
         elif request.method == "GET":
             return request.GET.dict()

@@ -36,7 +36,7 @@ def formatBizQueryParaMap(paraMap, urlencode):
         if v is None or v == "":
             # 为空直接跳过
             continue
-        buff.append("{0}={1}".format(k, str(v)))
+        buff.append("{0}={1}".format(k, v))
     return "&".join(buff)
 
 
