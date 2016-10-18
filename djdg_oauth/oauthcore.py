@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+import sys
 from django.conf import settings as django_settings
 import random
 import hashlib
 from .models import OauthApps
 import urlparse
-import sys
+import logging
 PY3 = sys.version_info[0] == 3
+
 
 if PY3:
     unicode_type = str
@@ -13,6 +15,12 @@ if PY3:
 else:
     unicode_type = unicode
     bytes_type = str
+log_settings = "oauthlib"
+if hasattr(django_settings, 'DJDG_AUTH'):
+    log_settings = django_settings.DJDG_AUTH.get('log', log_settings)
+log = logging.getLogger(log_settings)
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 def createNoncestr(length=32):
@@ -26,6 +34,8 @@ def createNoncestr(length=32):
 
 def formatBizQueryParaMap(paraMap, urlencode):
     """格式化参数，签名过程需要使用"""
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
     if isinstance(paraMap, (str, unicode)):
         return paraMap
     paraMap = to_unicode(paraMap)
@@ -36,7 +46,7 @@ def formatBizQueryParaMap(paraMap, urlencode):
         if v is None or v == "":
             # 为空直接跳过
             continue
-        buff.append("{0}={1}".format(k, v))
+        buff.append("{0}={1}".format(k, str(v)))
     return "&".join(buff)
 
 
@@ -48,8 +58,10 @@ def getSign(obj, secret):
     String = "{0}&secret={1}".format(String, secret)
     # 签名步骤三：MD5加密
     String = hashlib.md5(String).hexdigest()
+    log.info(String)
     # 签名步骤四：所有字符转为大写
     result_ = String.upper()
+    log.info(result_)
     return result_
 
 

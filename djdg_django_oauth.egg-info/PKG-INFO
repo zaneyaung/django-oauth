@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: djdg-django-oauth
-Version: 0.0.16
+Version: 0.0.20
 Summary: djdg OAuth2 method for Django
 Home-page: UNKNOWN
 Author: zaneYang
@@ -98,6 +98,12 @@ Description: # django-oauth
         
         Changelog
         ---------
+        
+        version 0.0.20
+        
+        debug ascii error
+        
+        
         
 Keywords: djdg django oauth2 oauthlib
 Platform: UNKNOWN
