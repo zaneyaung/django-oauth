@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 
-version = '0.0.21'
+version = '0.0.22'
 
 
 LONG_DESCRIPTION = open('README.rst').read()

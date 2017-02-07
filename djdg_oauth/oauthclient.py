@@ -69,7 +69,10 @@ class OAuthClient(object):
         :return: provided POST parameters
         """
         CONTENT_TYPE = request.environ.get("CONTENT_TYPE")
-        if CONTENT_TYPE and CONTENT_TYPE.upper() in ("APPLICATION/JSON;CHARSET=UTF-8", "APPLICATION/JSON"):
+        if CONTENT_TYPE and CONTENT_TYPE.upper() in (
+                "APPLICATION/JSON; CHARSET=UTF-8",
+                "APPLICATION/JSON",
+                "APPLICATION/JSON;CHARSET=UTF-8"):
             return request.body
         elif request.method == "GET":
             return request.GET.dict()
